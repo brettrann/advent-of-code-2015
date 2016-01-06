@@ -1,24 +1,9 @@
 #!/usr/bin/env ruby
 
-@input = File.readlines('input.txt').map(&:to_i)
+require 'pp'
+array = File.readlines('input.txt').map(&:to_i)
 
-def find_smallest_quantum(wanted_weight)
-  all = (4..7).flat_map{|size| @input.combination(size).select {|a|a.reduce(:+) == wanted_weight}.sort}
-  smallest = nil
-  quantum_smallest = nil
-  all.each do |e|
-    smallest = e.length if smallest.nil?
-    break if e.length > smallest
-    quantum = e.reduce(:*)
-    if (quantum_smallest.nil? || quantum < quantum_smallest)
-      quantum_smallest = quantum
-    end
-  end
-  quantum_smallest
-end
+f=->(l,g,i=1){l.combination(i).select{|a|a.reduce(:+)==(l.reduce(:+)/g)}.map{|a|a.reduce(:*)}.min||f.(l,g,i+1)}
 
-
-total_weight = @input.reduce(:+)
-
-puts "part1: #{find_smallest_quantum(total_weight/3)}"
-puts "part2: #{find_smallest_quantum(total_weight/4)}"
+p f.(array, 3)
+p f.(array, 4)
